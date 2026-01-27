@@ -6,6 +6,7 @@
     <Description>Context-aware Dynamic Chirper Messages for Cities: Skylines</Description>
     <LangVersion>9.0</LangVersion>
     <Configurations>Debug;Release</Configurations>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

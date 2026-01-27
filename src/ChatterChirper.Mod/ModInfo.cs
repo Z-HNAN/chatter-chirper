@@ -12,7 +12,7 @@ namespace ChatterChirper
         public void OnEnabled()
         {
             ConfigManager.Load();
-            ModLogger.Info("Mod Enabled");
+            ModLogger.Info("Mod Enabled | Log file: " + ModLogger.LogFilePath);
             if (ModConfig.Instance.Enabled)
                 Patcher.PatchAll();
         }

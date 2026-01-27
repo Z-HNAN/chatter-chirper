@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- Adjust this path to match your Cities: Skylines installation -->
-    <ManagedPath Condition=" '$(OS)' == 'Windows_NT' ">C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed</ManagedPath>
+    <ManagedPath Condition=" '$(OS)' == 'Windows_NT' ">D:\game\steam\steamapps\common\Cities_Skylines\Cities_Data\Managed</ManagedPath>
     <ManagedPath Condition=" '$(OS)' == 'Unix' ">$(HOME)/Library/Application Support/Steam/steamapps/common/Cities_Skylines/Cities.app/Contents/Resources/Data/Managed</ManagedPath>
   </PropertyGroup>
 </Project>
