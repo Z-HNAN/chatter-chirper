@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>ChatterChirper</AssemblyName>
+    <Description>Context-aware Dynamic Chirper Messages for Cities: Skylines</Description>
+    <LangVersion>9.0</LangVersion>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Dependencies defined in Tasks -->
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Game References from Directory.Build.props ManagedPath -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedPath)\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ICities">
+      <HintPath>$(ManagedPath)\ICities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ColossalManaged">
+      <HintPath>$(ManagedPath)\ColossalManaged.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Post Build Event to Copy to Local Mod Folder -->
+  <Target Name="DeployMod" AfterTargets="Build">
+    <PropertyGroup>
+      <ModFolder Condition=" '$(OS)' == 'Unix' ">$(HOME)/Library/Application Support/Colossal Order/Cities_Skylines/Addons/Mods/ChatterChirper</ModFolder>
+      <ModFolder Condition=" '$(OS)' == 'Windows_NT' ">$(LocalAppData)\Colossal Order\Cities_Skylines\Addons\Mods\ChatterChirper</ModFolder>
+    </PropertyGroup>
+    
+    <Message Text="Deploying mod to $(ModFolder)..." Importance="High" />
+    
+    <!-- Unix Install -->
+    <Exec Command="mkdir -p &quot;$(ModFolder)&quot;" Condition=" '$(OS)' == 'Unix' " />
+    <Exec Command="cp &quot;$(TargetPath)&quot; &quot;$(ModFolder)/&quot;" Condition=" '$(OS)' == 'Unix' " />
+    <Exec Command="cp &quot;$(TargetDir)0Harmony.dll&quot; &quot;$(ModFolder)/&quot;" Condition=" '$(OS)' == 'Unix' And Exists('$(TargetDir)0Harmony.dll') " />
+
+    <!-- Windows Install -->
+    <Exec Command="xcopy /y /q &quot;$(TargetPath)&quot; &quot;$(ModFolder)\&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
+    <Exec Command="xcopy /y /q &quot;$(TargetDir)0Harmony.dll&quot; &quot;$(ModFolder)\&quot;" Condition=" '$(OS)' == 'Windows_NT' And Exists('$(TargetDir)0Harmony.dll') " />
+  </Target>
+
+</Project>

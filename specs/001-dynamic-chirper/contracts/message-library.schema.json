@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chirper Message Library",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["traffic", "housing", "tax", "job", "service", "disaster", "praise", "flavor"]
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "conditions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": ["number", "string"]
+            }
+          },
+          "cooldown": {
+            "type": "integer",
+            "default": 600
+          },
+          "weight": {
+            "type": "number",
+            "default": 1.0
+          },
+          "texts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["id", "category", "texts"]
+      }
+    }
+  },
+  "required": ["messages"]
+}

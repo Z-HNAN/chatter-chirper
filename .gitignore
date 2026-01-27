@@ -1,0 +1,24 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.pdb
+
+# C# / .NET
+bin/
+obj/
+packages/
+*.dll
+
+# Unity (if we have any unity project files, though likely just a library)
+Library/
+Temp/
+Logs/
+
+# Specs & Docs
+# Keep specks and docs
+
+# OS
+.DS_Store
+Thumbs.db

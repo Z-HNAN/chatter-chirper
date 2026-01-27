@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "id": "traffic_jam_major",
+      "category": "traffic",
+      "severity": 5,
+      "conditions": {
+        "trafficFlow": "<40"
+      },
+      "texts": [
+        "I've been stuck in traffic for days! #traffic #fail",
+        "Why are there so many cars? The mayor needs to fix this!"
+      ]
+    },
+    {
+      "id": "high_happiness",
+      "category": "praise",
+      "severity": 1,
+      "conditions": {
+        "happiness": ">90"
+      },
+      "texts": [
+        "What a wonderful place to live! #ilovemycity",
+        "The services here are amazing."
+      ]
+    }
+  ]
+}
