@@ -74,5 +74,51 @@ namespace ChatterChirper.Tests
             var selector = new TextSelector();
             Assert.IsNull(selector.SelectMessage(context, pool));
         }
+        
+        [Test]
+        public void SelectMessage_RespectsCooldown()
+        {
+            var msg = new MessageDefinition 
+            { 
+               id = "repeat_test",
+               cooldown = 10,
+               texts = new List<string> { "text" }
+            };
+            var pool = new List<MessageDefinition> { msg };
+            var ctx = new CityContext();
+            
+            var selector = new TextSelector();
+            
+            // First select should succeed
+            var r1 = selector.SelectMessage(ctx, pool);
+            Assert.IsNotNull(r1);
+            
+            // Second select immediate should fail/return null or different (if pool had others)
+            // Here pool only has one, so it should return null
+            var r2 = selector.SelectMessage(ctx, pool);
+            Assert.IsNull(r2);
+        }
+
+        [Test]
+        public void SelectMessage_WeightedRandom()
+        {
+            var heavy = new MessageDefinition { id="heavy", weight=100.0f, texts=new List<string>{"H"} };
+            var light = new MessageDefinition { id="light", weight=1.0f, texts=new List<string>{"L"} };
+            var pool = new List<MessageDefinition> { heavy, light };
+            
+            var selector = new TextSelector();
+            var ctx = new CityContext();
+            
+            int hCount = 0;
+            for(int i=0; i<100; i++)
+            {
+               // clear cooldown/history for this test or use new selector
+               var s = new TextSelector(); 
+               var r = s.SelectMessage(ctx, pool);
+               if(r.id == "heavy") hCount++;
+            }
+            
+            Assert.Greater(hCount, 80); // Heavy should appear way more often
+        }
     }
 }

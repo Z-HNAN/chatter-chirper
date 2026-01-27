@@ -100,15 +100,15 @@ description: "Task list for Context-aware Dynamic Chirper Messages"
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T024 [P] [US3] Unit test for Cooldown logic (immediate repeat prevention) in `src/ChatterChirper.Tests/TextSelectorTests.cs`
-- [ ] T025 [P] [US3] Unit test for Weighted Random distribution in `src/ChatterChirper.Tests/TextSelectorTests.cs`
+- [x] T024 [P] [US3] Unit test for Cooldown logic (immediate repeat prevention) in `src/ChatterChirper.Tests/TextSelectorTests.cs`
+- [x] T025 [P] [US3] Unit test for Weighted Random distribution in `src/ChatterChirper.Tests/TextSelectorTests.cs`
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Add `LastSeen` dictionary to `TextSelector` state (runtime only)
-- [ ] T027 [US3] Implement Cooldown check logic in `src/ChatterChirper.Mod/Systems/TextSelector.cs`
-- [ ] T028 [US3] Implement Weighted Random selection algorithm in `src/ChatterChirper.Mod/Systems/TextSelector.cs`
-- [ ] T029 [US3] Add more variety to `messages.json` resource file
+- [x] T026 [US3] Add `LastSeen` dictionary to `TextSelector` state (runtime only)
+- [x] T027 [US3] Implement Cooldown check logic in `src/ChatterChirper.Mod/Systems/TextSelector.cs`
+- [x] T028 [US3] Implement Weighted Random selection algorithm in `src/ChatterChirper.Mod/Systems/TextSelector.cs`
+- [x] T029 [US3] Add more variety to `messages.json` resource file
 
 **Checkpoint**: Feed feels natural with no immediate repeats.
 

@@ -1,27 +1,92 @@
 {
   "messages": [
     {
-      "id": "traffic_jam_major",
+      "id": "traffic_jam_major_01",
       "category": "traffic",
       "severity": 5,
       "conditions": {
         "trafficFlow": "<40"
       },
       "texts": [
-        "I've been stuck in traffic for days! #traffic #fail",
-        "Why are there so many cars? The mayor needs to fix this!"
+        "在这个路口堵了三天三夜了！市长是想让我们在车里过年吗？ #堵车 #崩溃",
+        "我刚才看到一只蜗牛爬得比我的车还快……这就是所谓的“高速”公路吗？",
+        "如果堵车能发电，我们城市的电力早就过剩了！"
       ]
     },
     {
-      "id": "high_happiness",
+      "id": "traffic_jam_moderate_01",
+      "category": "traffic",
+      "severity": 3,
+      "conditions": {
+        "trafficFlow": "<60"
+      },
+      "texts": [
+        "又是红灯！今天的通勤时间比工作时间还长。",
+        "听说市长又修了一条路？这就是它堵车的原因吗？"
+      ]
+    },
+    {
+      "id": "high_happiness_01",
       "category": "praise",
       "severity": 1,
       "conditions": {
         "happiness": ">90"
       },
       "texts": [
-        "What a wonderful place to live! #ilovemycity",
-        "The services here are amazing."
+        "生活在这个城市简直太棒了！空气清新，邻居和睦。 #我爱我的城市",
+        "刚刚去公园散步，感觉人生达到了巅峰。",
+        "即使只是走在街上，也能感受到那种幸福的氛围！"
+      ]
+    },
+    {
+      "id": "low_happiness_01",
+      "category": "service",
+      "severity": 4,
+      "conditions": {
+        "happiness": "<50"
+      },
+      "texts": [
+        "这个城市让人感到绝望。想搬家了。",
+        "为什么所有的服务都这么糟糕？我们是不是被遗弃了？"
+      ]
+    },
+    {
+      "id": "tax_high_res_01",
+      "category": "tax",
+      "severity": 3,
+      "conditions": {
+        "taxRateResidential": ">12"
+      },
+      "texts": [
+        "房租太贵了，税也太高了！市长是想把我们都赶走吗？ #高税收",
+        "我辛辛苦苦工作，一半的钱都交了税。这合理吗？",
+        "听说隔壁城市的税率只有这里的一半……"
+      ]
+    },
+    {
+      "id": "high_unemployment_01",
+      "category": "job",
+      "severity": 5,
+      "conditions": {
+        "unemployment": ">15"
+      },
+      "texts": [
+        "投了一百份简历，连个面试都没有。这个城市还有工作吗？",
+        "大家都失业了，街上全是闲逛的人。这可不是好兆头。",
+        "谁能给我一份工作？哪怕是扫大街也行啊！"
+      ]
+    },
+    {
+      "id": "meta_flavor_01",
+      "category": "flavor",
+      "severity": 0,
+      "weight": 0.5,
+      "texts": [
+        "我刚才好像看到桥边有一架UFO飞过！真的！",
+        "有人想要一起拼单买甜甜圈吗？",
+        "你知道吗？现在的Chirper消息变得越来越有意思了。",
+        "那个奇怪的蓝色小鸟又在叫了，它到底想说什么？",
+        "今天的云看起来像市长的脸……有点恐怖。"
       ]
     }
   ]

@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using ChatterChirper.Models;
 using System;
+using System.Linq;
 
 namespace ChatterChirper.Systems
 {
     public class TextSelector
     {
+        private Dictionary<string, DateTime> lastSeen = new Dictionary<string, DateTime>();
+        private Random random = new Random();
+
         public MessageDefinition SelectMessage(CityContext context, List<MessageDefinition> pool)
         {
             if (pool == null || pool.Count == 0 || context == null) return null;
@@ -16,26 +20,62 @@ namespace ChatterChirper.Systems
             {
                 if (CheckConditions(msg, context))
                 {
-                    // T022: Apply Toxicity
-                    // If toxicity is high, and message is severe, boost it (pretend weight)
-                    // Since we return FIRST match, we should sort by (Weight * Multiplier) descending?
-                    // For MVP Phase 4, let's just add to candidates.
-                    matches.Add(msg);
+                    // Check Cooldown
+                    if (!IsOnCooldown(msg))
+                    {
+                        matches.Add(msg);
+                    }
                 }
             }
 
             if (matches.Count == 0) return null;
 
-            // Sort by effective weight
-            matches.Sort((a, b) => {
-                float wA = CalculateWeight(a);
-                float wB = CalculateWeight(b);
-                return wB.CompareTo(wA); // Descending
-            });
-
-            return matches[0];
+            // Weighted Random Selection
+            return SelectWeighted(matches);
         }
-        
+
+        private bool IsOnCooldown(MessageDefinition msg)
+        {
+             if (!lastSeen.ContainsKey(msg.id)) return false;
+             
+             // Time since last seen
+             // In game we use SimulationManager.instance.m_currentFrameIndex or m_currentGameTime
+             // For simplicity/portability, let's use DateTime Now as proxy, 
+             // though in-game time is better. For MVP let's use wall clock.
+             
+             double secondsSince = (DateTime.Now - lastSeen[msg.id]).TotalSeconds;
+             return secondsSince < msg.cooldown;
+        }
+
+        private MessageDefinition SelectWeighted(List<MessageDefinition> matches)
+        {
+            float totalWeight = 0;
+            foreach(var m in matches) totalWeight += CalculateWeight(m);
+            
+            float roll = (float)(random.NextDouble() * totalWeight);
+            
+            float current = 0;
+            foreach(var m in matches)
+            {
+                current += CalculateWeight(m);
+                if (roll <= current)
+                {
+                    RecordSelection(m);
+                    return m;
+                }
+            }
+            
+            // Fallback
+            var final = matches.Last();
+            RecordSelection(final);
+            return final;
+        }
+
+        private void RecordSelection(MessageDefinition msg)
+        {
+            lastSeen[msg.id] = DateTime.Now;
+        }
+
         private float CalculateWeight(MessageDefinition msg)
         {
              float w = msg.weight;
@@ -58,6 +98,8 @@ namespace ChatterChirper.Systems
                 if (key == "trafficFlow") targetValue = context.TrafficFlow;
                 else if (key == "happiness") targetValue = context.Happiness;
                 else if (key == "unemployment") targetValue = context.Unemployment;
+                else if (key == "taxRateResidential") targetValue = context.TaxRateResidential;
+                else if (key == "isDisasterActive") targetValue = context.IsDisasterActive ? 1.0f : 0.0f;
                 else found = false;
 
                 if (found && !EvaluateCondition(opValue, targetValue)) return false;
