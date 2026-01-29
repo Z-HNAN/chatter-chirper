@@ -72,9 +72,30 @@ namespace ChatterChirper
                             original = addMessageMethods[0];
                         }
 
-                        var prefix = new HarmonyMethod(typeof(Patches.ChirperPanelPatch).GetMethod("Prefix", BindingFlags.Public | BindingFlags.Static));
-                        harmony.Patch(original, prefix: prefix);
-                        ModLogger.Info("Patched ChirpPanel.AddMessage -> " + DescribeMethod(original));
+                        // Patch only the overload with the most parameters to avoid double-patching if one calls another
+                        MethodInfo targetMethod = null;
+                        int maxParams = -1;
+                        
+                        foreach (var m in addMessageMethods)
+                        {
+                            var pParams = m.GetParameters();
+                            if (pParams.Length > maxParams)
+                            {
+                                maxParams = pParams.Length;
+                                targetMethod = m;
+                            }
+                        }
+
+                        if (targetMethod != null)
+                        {
+                            var prefix = new HarmonyMethod(typeof(Patches.ChirperPanelPatch).GetMethod("Prefix", BindingFlags.Public | BindingFlags.Static));
+                            harmony.Patch(targetMethod, prefix: prefix);
+                            ModLogger.Info("Patched ChirpPanel.AddMessage -> " + DescribeMethod(targetMethod));
+                        }
+                        else
+                        {
+                            ModLogger.Warning("No suitable AddMessage overload found to patch.");
+                        }
                     }
                 }
             }

@@ -34,6 +34,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Resources\messages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <!-- Post Build Event to Copy to Local Mod Folder -->
   <Target Name="DeployMod" AfterTargets="Build">
     <PropertyGroup>
@@ -51,6 +57,7 @@
     <!-- Windows Install -->
     <Exec Command="xcopy /y /q &quot;$(TargetPath)&quot; &quot;$(ModFolder)\&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
     <Exec Command="xcopy /y /q &quot;$(TargetDir)0Harmony.dll&quot; &quot;$(ModFolder)\&quot;" Condition=" '$(OS)' == 'Windows_NT' And Exists('$(TargetDir)0Harmony.dll') " />
+    <Exec Command="xcopy /y /q &quot;$(ProjectDir)Resources\messages.json&quot; &quot;$(ModFolder)\&quot;" Condition=" '$(OS)' == 'Windows_NT' And Exists('$(ProjectDir)Resources\messages.json') " />
   </Target>
 
 </Project>

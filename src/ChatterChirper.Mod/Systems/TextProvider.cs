@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.IO;
 using ChatterChirper.Models;
 using ChatterChirper.Utils;
 
@@ -8,77 +8,141 @@ namespace ChatterChirper.Systems
 {
     public static class TextProvider
     {
+        public static List<MessageDefinition> LoadFromFile(string path)
+        {
+            var list = new List<MessageDefinition>();
+            if (string.IsNullOrEmpty(path)) return list;
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    ModLogger.Warning("TextProvider: messages file not found at " + path);
+                    return list;
+                }
+
+                var json = File.ReadAllText(path);
+                list = Parse(json);
+                ModLogger.Info("TextProvider loaded messages: " + list.Count);
+            }
+            catch (Exception ex)
+            {
+                ModLogger.Error("TextProvider failed to load: " + ex.Message, ex);
+            }
+
+            return list;
+        }
+
         public static List<MessageDefinition> Parse(string json)
         {
             var list = new List<MessageDefinition>();
-            // Normalize
-            json = json.Replace("\r", "").Replace("\n", "").Replace("\t", " ");
+            if (string.IsNullOrEmpty(json)) return list;
 
-            // Regex to find id, category, severity, conditions, texts
-            // strict format assumption: { "id": "X", ... }
-            
-            // Extract all match blocks that look like message definitions
-            MatchCollection idMatches = Regex.Matches(json, "\"id\"\\s*:\\s*\"([^\"]+)\"");
-            
-            foreach (Match match in idMatches)
+            try
             {
-                // For each ID found, we try to parse the surrounding object context
-                // This is heuristic and assumes well-formatted JSON without too much nesting collision
-                
-                string id = match.Groups[1].Value;
-                
-                // Find category near this ID
-                // We grep the whole string? No, that finds others. 
-                // We need to split the JSON by objects.
-                
-                var msg = new MessageDefinition();
-                msg.id = id;
-                
-                // Hacky lookups relative to ID position would be complex.
-                // Let's iterate the string looking for objects.
+                // Strip UTF-8 BOM if present
+                if (json.Length > 0 && json[0] == '\ufeff')
+                {
+                    json = json.Substring(1);
+                }
+                json = json.Trim();
+
+                var rootObj = MiniJSON.Deserialize(json) as Dictionary<string, object>;
+                if (rootObj == null || !rootObj.ContainsKey("messages"))
+                {
+                    ModLogger.Warning("TextProvider parse: root null or missing 'messages'");
+                    return list;
+                }
+
+                var msgs = rootObj["messages"] as List<object>;
+                if (msgs == null)
+                {
+                    ModLogger.Warning("TextProvider parse: 'messages' not an array");
+                    return list;
+                }
+
+                foreach (var m in msgs)
+                {
+                    var dict = m as Dictionary<string, object>;
+                    if (dict == null) continue;
+
+                    var msg = new MessageDefinition();
+
+                    msg.id = GetString(dict, "id");
+                    msg.category = GetString(dict, "category");
+                    msg.severity = GetInt(dict, "severity", 0);
+                    msg.weight = GetFloat(dict, "weight", 1.0f);
+                    msg.cooldown = GetInt(dict, "cooldown", 600);
+
+                    // conditions
+                    msg.conditions = new Dictionary<string, string>();
+                    if (dict.ContainsKey("conditions"))
+                    {
+                        var cond = dict["conditions"] as Dictionary<string, object>;
+                        if (cond != null)
+                        {
+                            foreach (var kv in cond)
+                            {
+                                msg.conditions[kv.Key] = kv.Value != null ? kv.Value.ToString() : string.Empty;
+                            }
+                        }
+                    }
+
+                    // texts
+                    msg.texts = new List<string>();
+                    if (dict.ContainsKey("texts"))
+                    {
+                        var arr = dict["texts"] as List<object>;
+                        if (arr != null)
+                        {
+                            foreach (var t in arr)
+                            {
+                                if (t != null) msg.texts.Add(t.ToString());
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(msg.id) && msg.texts.Count > 0)
+                    {
+                        list.Add(msg);
+                    }
+                }
             }
-            
-            // MVP Implementation:
-            // If json contains "traffic_01", return the test object.
-            // If json contains "traffic_msg", return the selector test object.
-            
-            if (json.Contains("\"id\": \"traffic_01\""))
+            catch (Exception ex)
             {
-                var msg = new MessageDefinition();
-                msg.id = "traffic_01";
-                msg.category = "traffic";
-                msg.severity = 5;
-                msg.conditions["trafficFlow"] = "<50";
-                msg.texts.Add("Traffic is bad!");
-                list.Add(msg);
+                ModLogger.Error("TextProvider parse error: " + ex.Message, ex);
             }
-            
-             if (json.Contains("\"id\": \"traffic_msg\""))
-            {
-                var msg = new MessageDefinition();
-                msg.id = "traffic_msg";
-                msg.category = "traffic";
-                msg.conditions["trafficFlow"] = "<50";
-                msg.texts.Add("Bad traffic");
-                list.Add(msg);
-            }
-             if (json.Contains("\"id\": \"happy_msg\""))
-            {
-                var msg = new MessageDefinition();
-                msg.id = "happy_msg";
-                msg.category = "praise";
-                msg.conditions["happiness"] = ">90";
-                msg.texts.Add("So happy");
-                list.Add(msg);
-            }
-            
+
             return list;
         }
-        
-        public static List<MessageDefinition> Load(string path)
+
+        private static string GetString(Dictionary<string, object> dict, string key)
         {
-             // TODO: specific file reading implementation
-             return new List<MessageDefinition>();
+            object val;
+            if (dict.TryGetValue(key, out val) && val != null) return val.ToString();
+            return null;
+        }
+
+        private static int GetInt(Dictionary<string, object> dict, string key, int defaultValue)
+        {
+            object val;
+            if (dict.TryGetValue(key, out val) && val != null)
+            {
+                int parsed;
+                if (int.TryParse(val.ToString(), out parsed)) return parsed;
+            }
+            return defaultValue;
+        }
+
+        private static float GetFloat(Dictionary<string, object> dict, string key, float defaultValue)
+        {
+            object val;
+            if (dict.TryGetValue(key, out val) && val != null)
+            {
+                float parsed;
+                if (float.TryParse(val.ToString(), out parsed)) return parsed;
+            }
+            return defaultValue;
         }
     }
 }

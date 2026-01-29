@@ -100,9 +100,25 @@ namespace ChatterChirper.Systems
                 else if (key == "unemployment") targetValue = context.Unemployment;
                 else if (key == "taxRateResidential") targetValue = context.TaxRateResidential;
                 else if (key == "isDisasterActive") targetValue = context.IsDisasterActive ? 1.0f : 0.0f;
-                else found = false;
+                else if (key == "crimeRate") targetValue = context.CrimeRate;
+                else if (key == "fireHazard") targetValue = context.FireHazard;
+                else if (key == "healthAvg") targetValue = context.HealthAvg;
+                else if (key == "educationAvg") targetValue = context.EducationAvg;
+                else if (key == "population") targetValue = context.Population;
+                else if (key == "money") targetValue = context.Money;
+                else if (key == "isNight") targetValue = context.IsNight ? 1.0f : 0.0f;
+                else 
+                {
+                    // ModLogger.Debug("TextSelector: Unknown condition key " + key);
+                    found = false;
+                }
 
-                if (found && !EvaluateCondition(opValue, targetValue)) return false;
+                if (found && !EvaluateCondition(opValue, targetValue)) 
+                {
+                    // Optional: Log failure reason
+                    // ModLogger.Debug("Condition failed: " + key + " " + opValue + " (Actual: " + targetValue + ")");
+                    return false;
+                }
             }
             return true;
         }

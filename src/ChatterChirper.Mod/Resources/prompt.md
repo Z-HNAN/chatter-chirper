@@ -43,11 +43,30 @@ Each object in the "messages" array must look like this:
 
 ## Valid Condition Keys (`conditions`)
 Use these keys. Operators can be `<` or `>`.
-- `trafficFlow` (0-100): Lower is worse traffic. e.g. `"<50"` means high traffic.
+
+**Core Stats:**
+- `trafficFlow` (0-100): Lower is worse traffic. e.g. `"<50"` means heavy congestion.
 - `happiness` (0-100): General city happiness.
-- `unemployment` (0-100): Percentage of unemployed. e.g. `">10"` is bad.
-- `taxRateResidential` (0-30): Percentage tax. e.g. `">12"` is high.
-- `isDisasterActive` (bool): Use `">0"` for True (Active).
+- `population` (number): Total city population. e.g. `">10000"`.
+
+**Economy & Society:**
+- `unemployment` (0-100): Percentage of unemployed. e.g. `">10"` is high unemployment.
+- `taxRateResidential` (0-30): Percentage tax. e.g. `">12"` is high tax.
+- `educationAvg` (0-100): Average education level. `"<40"` means uneducated workforce.
+
+**City Services & Safety:**
+- `crimeRate` (0-100): Crime percentage. `">15"` is dangerous, `">30"` is Gotham City.
+- `fireHazard` (0-100): Fire risk percentage. `">20"` is risky.
+- `healthAvg` (0-100): Average citizen health. `"<50"` means sick city.
+- `garbageStatus` (0-100): Garbage processing status. `"<20"` means critical pileup.
+
+**Utilities (0-100, where 100 is full, <20 is critical)**:
+- `electricityAvailability`
+- `waterAvailability`
+
+**Environment:**
+- `isNight` (bool): `">0"` for Night time only messages.
+- `isDisasterActive` (bool): `">0"` for True (Active).
 
 ## Example Output
 
