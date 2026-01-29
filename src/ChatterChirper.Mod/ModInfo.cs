@@ -34,18 +34,6 @@ namespace ChatterChirper
                 if (isChecked) Patcher.PatchAll();
                 else Patcher.UnpatchAll();
             });
-
-            group.AddSlider("Toxicity Level", 0.0f, 2.0f, 0.1f, ModConfig.Instance.Toxicity, (val) =>
-            {
-                ModConfig.Instance.Toxicity = val;
-                ConfigManager.Save();
-            });
-            
-             group.AddSlider("Replace Probability", 0.0f, 1.0f, 0.1f, ModConfig.Instance.ReplaceProbability, (val) =>
-            {
-                ModConfig.Instance.ReplaceProbability = val;
-                ConfigManager.Save();
-            });
         }
     }
 }
