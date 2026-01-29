@@ -1,0 +1,122 @@
+{
+  "CHIRP_TRAFFIC_JAM": [
+    "I've been stuck here for days! Is the mayor playing Tetris with our roads?",
+    "Traffic is so slow I saw a snail overtake me on the highway.",
+    "If traffic was electricity, we'd have unlimited power!"
+  ],
+  "CHIRP_NO_ELECTRICITY": [
+    "Did we forget to pay the bill? Lights out everywhere!",
+    "My ice cream is melting! Mayor, do something!",
+    "Living in the stone age again... where is the power?"
+  ],
+  "CHIRP_NO_WATER": [
+    "Thirsty... so thirsty...",
+    "I guess I'll shower in my tears today.",
+    "No water? Really? In this economy?"
+  ],
+  "CHIRP_HIGH_CRIME": [
+    "I just saw someone steal a police car! #GTA",
+    "Lock your doors, hide your kids, the crime rate is skyrocketing!",
+    "Is this a city or a battle royale map?"
+  ],
+  "CHIRP_FIRE_HAZARD": [
+    "Is it hot in here or is the whole city a tinderbox?",
+    "I smell smoke... lots of smoke.",
+    "Please tell me the fire department isn't stuck in traffic."
+  ],
+  "CHIRP_DEAD_PILING_UP": [
+    "The neighbors produce quite a smell... oh wait.",
+    "It's like a zombie movie out here, but with less running.",
+    "Bring out your dead! Seriously, bring them out, the service is slow."
+  ],
+  "CHIRP_GARBAGE_PILING_UP": [
+    "I'm building a trash castle. Send help.",
+    "The rats have formed a union.",
+    "Welcome to Garbage City!"
+  ],
+  "CHIRP_LOW_HAPPINESS": [
+    "I hate this place. Moving out tomorrow.",
+    "Who voted for this mayor anyway?",
+    "Zero stars. Would not recommend."
+  ],
+  "CHIRP_NOISY": [
+    "WHAT? I CAN'T HEAR YOU OVER THE NOISE!",
+    "My ears are bleeding.",
+    "So peaceful... said no one ever."
+  ],
+  "CHIRP_TRASH_PILING_UP": [
+    "The garbage trucks are mythical creatures, verified.",
+    "I'm building a trash castle. Send help.",
+    "The rats have formed a union."
+  ],
+  "CHIRP_ABANDONED_BUILDINGS": [
+    "Ghost town vibes. Where did everyone go?",
+    "Broken windows theory in action.",
+    "This neighborhood is looking a bit spooky."
+  ],
+  "CHIRP_COMMERCIAL_DEMAND": [
+    "Where can I buy a spatula? Nowhere!",
+    "My wallet is heavy but the shops are few.",
+    "We need more malls!"
+  ],
+  "CHIRP_INDUSTRIAL_DEMAND": [
+    "I want to work! Give us factories!",
+    "Unemployment is boring. Build more industry!",
+    "We need more goods to sell!"
+  ],
+  "CHIRP_RESIDENTIAL_DEMAND": [
+    "My cousin is sleeping on my couch because there are no houses.",
+    "Rent is too high! Build more homes!",
+    "People are fighting over cardboard boxes."
+  ],
+  "CHIRP_NEED_MORE_PARKS": [
+    "Calculate less, relax more! We need parks!",
+    "All work and no play makes Jack a dull chirper.",
+    "I want to touch grass."
+  ],
+  "CHIRP_NO_HEALTHCARE": [
+    "I'm coughing up a lung and the clinic is full.",
+    "Is there a doctor in the house? Or the city?",
+    "An apple a day keeps the doctor away... because there are no doctors."
+  ],
+  "CHIRP_NO_SCHOOLS": [
+    "I carnt spel becoz no shool.",
+    "Kids are roaming the streets instead of learning math.",
+    "We need education! Knowledge is power!"
+  ],
+  "CHIRP_SEWAGE": [
+    "Something smells funny...",
+    "Why is the tap water brown?",
+    "Eww! Fix the pipes!"
+  ],
+  "CHIRP_POLLUTION": [
+    "Cough cough! The air is thick.",
+    "I can taste the air. It tastes like soot.",
+    "Smog alert! Again!"
+  ],
+  "CHIRP_POISONED": [
+    "I don't feel so good...",
+    "Is the water supposed to glow?",
+    "I think I've been poisoned!"
+  ],
+  "CHIRP_LOW_HEALTH": [
+    "Everyone is sick!",
+    "This city is a biohazard zone.",
+    "Health levels critical!"
+  ],
+  "CHIRP_ATTRACTIVE_CITY": [
+    "Wow! Everyone wants to visit our city! #TouristTrap",
+    "So many tourists... guess I'll stay inside.",
+    "Our city is looking fabulous today!"
+  ],
+  "CHIRP_HAPPY_PEOPLE": [
+    "I'm walking on sunshine!",
+    "The mayor is actually doing a good job? Shocking.",
+    "Life is good here. 10/10 would live again."
+  ],
+  "CHIRP_LOW_CRIME": [
+    "I left my door unlocked and nothing happened!",
+    "Cyclists are the only gang in town now.",
+    "Police are bored. That is a good thing!"
+  ]
+}

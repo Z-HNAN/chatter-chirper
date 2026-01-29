@@ -34,7 +34,11 @@
     </Reference>
   </ItemGroup>
 
-
+  <ItemGroup>
+    <None Include="Resources\messages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <!-- Post Build Event to Copy to Local Mod Folder -->
   <Target Name="DeployMod" AfterTargets="Build">
