@@ -1,130 +1,116 @@
-# Chatter Chirper - Cities: Skylines Mod (MVP)
+# Chatter Chirper — Cities: Skylines Mod
 
-Chatter Chirper is a mod for Cities: Skylines. This is a Minimal Viable Product (MVP) demonstrating how to intercept "chirps" and replace their content.
-
-This repository serves as a reference implementation (seed project) for creating mods that intercept and modify game logic using **Harmony**.
+Chatter Chirper is a Cities: Skylines mod that intercepts in‑game "chirps" and replaces their text on the fly. It demonstrates safe, targeted game logic modification via Harmony, with a small, testable codebase you can extend.
 
 ---
 
-## 1. Installation & Setup (Seed Project Guide)
+## Overview
 
-If you are using this project as a template or "seed" to start your own modding journey, follow these steps to get your environment ready.
+- Purpose: Intercept `ChirpPanel.AddMessage(IChirperMessage)` and swap the message text without breaking sender metadata.
+- Technique: Harmony prefix patch + lightweight proxy (`ChirperMessageProxy`) that implements `IChirperMessage`.
+- Target frameworks: Mod `net35` (Unity/Mono), Tests `net472`.
 
-### Prerequisites
-- **Visual Studio 2022** (or VS Code with .NET Framework 3.5 Check/Dev Pack).
-- **Cities: Skylines** installed (Steam version recommended).
-- **Harmony** (Lib.Harmony) - Included via NuGet or game reference.
+---
 
-### Step 1: Configure Game Paths
-The project needs to reference the game's DLLs (`assembly-csharp.dll`, `ICities.dll`, `ColossalManaged.dll`, etc.).
-We use `Directory.Build.props` to define the path to these files so you don't have to edit the `.csproj` directly.
+## Requirements
 
-1. Open `Directory.Build.props` in the root folder.
-2. Edit the `ManagedPath` property to match your local installation:
-   ```xml
-   <PropertyGroup>
-     <!-- Example Path for Windows Steam -->
-     <ManagedPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed</ManagedPath>
-   </PropertyGroup>
-   ```
+- Windows with Cities: Skylines (Steam recommended).
+- Visual Studio 2022 (or VS Code) with .NET Framework 3.5 and 4.7.2 Dev Packs.
+- Harmony (Lib.Harmony) is included via NuGet/reference in the project.
 
-### Step 2: Build the Mod
-You can build the project using the provided PowerShell script or standard dotnet commands.
+---
 
-**Using PowerShell:**
+## Setup
+
+1) Configure game managed assemblies path
+
+Edit `Directory.Build.props` and point `ManagedPath` to your game install (example below). This ensures references like `Assembly-CSharp.dll`, `ICities.dll`, and `ColossalManaged.dll` resolve correctly.
+
+```xml
+<PropertyGroup>
+    <!-- Example path for Windows Steam -->
+    <ManagedPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed</ManagedPath>
+    <!-- If using a different library folder name, adjust accordingly. -->
+    <!-- E.g., Cities_Data/Managed or Cities_Data/Mono/Managed depending on build/version. -->
+    </PropertyGroup>
+```
+
+2) Build (Release)
+
+Preferred: use the provided PowerShell script.
+
 ```powershell
 ./build_mod.ps1
 ```
-This script builds the solution in `Release` mode.
 
-**Using Command Line:**
-```bash
+Alternatively, build the mod project directly:
+
+```powershell
 dotnet build src/ChatterChirper.Mod/ChatterChirper.Mod.csproj -c Release
 ```
 
-### Step 3: Deployment
-The `.csproj` file usually contains a post-build event (or you can manually copy) to move the compiled DLLs to the game's local mod directory:
-- **Location**: `%LOCALAPPDATA%\Colossal Order\Cities_Skylines\Addons\Mods\ChatterChirper\`
-- **Files**: `ChatterChirper.Mod.dll`, `0Harmony.dll`
+---
 
-Once copied, launch Cities: Skylines and enable the mod in Content Manager.
+## Install (Deploy to Cities: Skylines)
+
+Copy the built files to your local Mods folder. Typical output will be under `src/ChatterChirper.Mod/bin/Release/net35/`.
+
+- Destination: `%LOCALAPPDATA%\Colossal Order\Cities_Skylines\Addons\Mods\ChatterChirper\`
+- Files to include: `ChatterChirper.Mod.dll` (and Harmony if not bundled by the loader/environment)
+
+Then launch the game and enable the mod in Content Manager → Mods.
+
+Tip: The mod log (when available) can be found near: `%LOCALAPPDATA%\Colossal Order\Cities_Skylines\Addons\Mods\ChatterChirper\ChatterChirper.log`.
 
 ---
 
-## 2. Technical Guide: Intercepting & Modifying Chirps
+## How It Works
 
-The core functionality of this mod relies on **intercepting** the message before it is displayed on the screen and **swapping** its content.
+1) Dynamic patch registration
 
-### The Hook (Harmony Patch)
-We use the [Harmony](https://harmony.pardeike.net/) library to patch the game's UI method that receives new messages.
+At startup, `Patcher` resolves `ChirpPanel` and `AddMessage` at runtime and attaches a Harmony prefix method. This is resilient to small assembly load/order shifts.
 
-**Target Method:** `ChirpPanel.AddMessage(IChirperMessage message)`  
-**Patch Type:** `Prefix`
+2) Safe message substitution
 
-Because `IChirperMessage` is an interface, we can intercept the call and inspect the incoming message object.
+`ChirperMessageProxy` wraps the original `IChirperMessage` and overrides only the `text` while forwarding `senderID` and `senderName`. The game proceeds with the proxy, rendering your custom text with the correct avatar/name.
 
-### Implementation Details
+---
 
-**1. The Patcher (Dynamic)**
-Instead of using standard Harmony annotations, we use dynamic patching in `Patcher.cs` to locate the `ChirpPanel` class and `AddMessage` method at runtime. This adds robustness against game updates or assembly reference issues.
+## Testing
 
-```csharp
-// Logic in Patcher.PatchAll()
-var chirpPanelType = AccessTools.TypeByName("ChirpPanel");
-var method = AccessTools.Method(chirpPanelType, "AddMessage");
-harmony.Patch(method, new HarmonyMethod(typeof(ChirperPanelPatch).GetMethod("Prefix")));
+Unit tests target .NET Framework 4.7.2.
+
+```powershell
+dotnet test src/ChatterChirper.Tests/ChatterChirper.Tests.csproj -c Debug
 ```
 
-**2. The Patch Logic (Prefix)**
-Located in `src/ChatterChirper.Mod/Patches/ChirperPanelPatch.cs`:
+---
 
-```csharp
-public static class ChirperPanelPatch
-{
-    // The "ref" keyword is crucial here!
-    public static void Prefix(ref IChirperMessage message)
-    {
-        // 1. Log the original message
-        // 2. Wrap it with our Proxy to override the text
-        // 3. Game receives the proxy and displays our fixed text
-        message = new ChirperMessageProxy(message, "Hello World!");
-    }
-}
-```
+## Project Structure
 
-**2. Swapping the Message**
-The game's built-in `CitizenMessage` class might be immutable or hard to modify directly via reflection. Instead of hacking the object's private fields, we use the **Proxy Pattern**.
+- `src/ChatterChirper.Mod/` — Mod source (patcher, systems, utilities, resources)
+- `src/ChatterChirper.Tests/` — Test project (net472)
+- `specs/001-dynamic-chirper/` — Design notes, plan, quickstart, and schema for messages
+- `build_mod.ps1` — Convenience script to build in Release
 
-We defined a wrapper class `ChirperMessageProxy` that implements `IChirperMessage`:
+Notable files:
 
-```csharp
-public class ChirperMessageProxy : IChirperMessage
-{
-    private readonly IChirperMessage _original;
-    private readonly string _newText;
+- `Patches/ChirperPanelPatch.cs` — Harmony prefix hook entry
+- `Models/ChirperMessageProxy.cs` — Proxy implementing `IChirperMessage`
+- `Systems/MessageLibrary.cs` — Message sourcing/selection helpers
+- `Resources/messages.json` — Example message content
 
-    public ChirperMessageProxy(IChirperMessage original, string newText)
-    {
-        _original = original;
-        _newText = newText;
-    }
+---
 
-    // Return our custom text instead of the original
-    public string text => _newText;
-    
-    // Pass everything else through to the original
-    public uint senderID => _original.senderID;
-    public string senderName => _original.senderName;
-}
-```
+## Troubleshooting
 
-**3. The Result**
-In the `Prefix` method, we replace the `ref message` argument with our proxy:
+- Missing references: Recheck `ManagedPath` in `Directory.Build.props`.
+- Build failures targeting `net35`: Ensure the .NET Framework 3.5 Dev Pack is installed.
+- Tests failing to restore `net472`: Install the .NET Framework 4.7.2 Developer Pack.
+- Mod not appearing: Confirm files are in the correct Mods folder and the mod is enabled in Content Manager.
 
-```csharp
-// Inside Prefix method
-string newText = "This is a custom message!";
-message = new ChirperMessageProxy(message, newText);
-```
+---
 
-When the game continues to execute `AddMessage`, it uses our `ChirperMessageProxy` instead of the original object, displaying our custom text on the screen while keeping the correct sender name and icon.
+## Acknowledgements
+
+Special thanks to my good buddy Copilot for the assist and code guidance throughout this project.
