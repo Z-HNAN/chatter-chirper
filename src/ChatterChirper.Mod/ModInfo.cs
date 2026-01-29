@@ -34,6 +34,12 @@ namespace ChatterChirper
                 if (isChecked) Patcher.PatchAll();
                 else Patcher.UnpatchAll();
             });
+
+            group.AddSlider("Replacement Chance [0-100]", 0, 100, 1, ModConfig.Instance.ReplaceChance, (value) =>
+            {
+                ModConfig.Instance.ReplaceChance = (int)value;
+                ConfigManager.Save();
+            });
         }
     }
 }

@@ -9,6 +9,7 @@ namespace ChatterChirper.Patches
     public static class ChirperPanelPatch
     {
         private static bool _libraryInitialized = false;
+        private static readonly Random _random = new Random();
 
         public static void Prefix(ref IChirperMessage message)
         {
@@ -18,6 +19,17 @@ namespace ChatterChirper.Patches
             try
             {
                 ModLogger.Info($"[Prefix] Entry. Sender: {message.senderName} (ID:{message.senderID}), Text: {message.text}");
+
+                // Chance check
+                if (ModConfig.Instance.ReplaceChance < 100)
+                {
+                    int roll = _random.Next(0, 100);
+                    if (roll >= ModConfig.Instance.ReplaceChance)
+                    {
+                        ModLogger.Info($"[SKIPPED] Chance roll: {roll} >= {ModConfig.Instance.ReplaceChance}");
+                        return;
+                    }
+                }
 
                 if (!_libraryInitialized)
                 {
