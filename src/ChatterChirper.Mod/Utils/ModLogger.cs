@@ -73,6 +73,8 @@ namespace ChatterChirper.Utils
 
         private static void Write(string level, string message)
         {
+            if (!Constants.EnableLogging) return;
+
             EnsureInitialized();
             var line = "[" + ModName + "] [" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "] [" + level + "] " + message;
 
